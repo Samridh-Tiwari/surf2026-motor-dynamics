@@ -12,7 +12,7 @@ Part B builds a causal, real-time detector of impending movement.
 
 ## Data
 
-Data is provided on request. Contact `tiwar133@purdue.edu`.
+Data is provided on request. Contact `samridhtiwari3005@gmail.com`.
 
 The recordings are too large for GitHub. The stitched spike archive is 1.7 GB,
 the per-session behavioural files total 33 GB, and the LFADS per-session outputs
@@ -207,6 +207,6 @@ verify_m1m2                              % controls on the M2 comparison
 
 ## Contact
 
-Samridh Tiwari, `tiwar133@purdue.edu`
+Samridh Tiwari, `samridhtiwari3005@gmail.com`
 Nano Neurotechnology Laboratory, Weldon School of Biomedical Engineering,
 Purdue University.
