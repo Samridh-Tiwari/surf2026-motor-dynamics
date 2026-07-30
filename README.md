@@ -47,7 +47,9 @@ partA/
   models/         trained cfg06 checkpoint and hyperparameters, per animal
   results/        JSON emitted by each script, one value per reported number
 partB/          real-time detection, validation, cross-day, cross-area (MATLAB)
+  pipeline/       causal front end: CMR, filter, adaptive threshold, PCA, CUSUM
 figures/        final figures
+partA/sweep_dyn.py  LFADS hyperparameter sweep and training entry point
 ```
 
 ## Labelling scheme
@@ -67,17 +69,124 @@ Part B: MATLAB R2026a.
 All stochastic procedures are seeded (`torch.manual_seed(0)`,
 `np.random.seed(0)`, `rng(7)`), so the reported numbers reproduce exactly.
 
-## Running the Part A scripts
+## Part A pipeline: fitting and analysing the dynamics
 
-The scripts contain absolute paths from the machine they were written on. Before
-running, edit the path constants at the top of each file:
+```
+lfads_stitch_data.h5                     raw spike counts, 1 ms, all sessions
+   |
+   |  partA/preprocessing/rebin_lfads_<animal>_FIXED.py
+   v
+lfads_sessions_<animal>_20ms_FIXED/      20 ms bins, 150 per trial, 80/20 split
+   |
+   |  partA/sweep_dyn.py <animal>        trains 10 configs, ranks by valid recon
+   v
+lfads_runs/sweep_dyn/<animal>/cfg06/     checkpoint + lfads_output_<session>.h5
+   |
+   |  partA/analysis/*.py
+   v
+figures/  and  partA/results/*.json
+```
 
-- `ROOT` or the `lfads_runs/...` path to point at your LFADS output directory
-- the `MultiSessionData/...` path in `fig_lever_decode.py`,
-  `fig_lever_traces.py` to point at the behavioural `.mat` files
-- `DST` to your output directory
+**1. Rebin.** Converts 1 ms counts to 20 ms bins and writes one HDF5 per session.
 
-Each script prints its numbers to stdout and writes a `*_stats.json`.
+```bash
+python partA/preprocessing/rebin_lfads_61199SOM_FIXED.py
+```
+
+**2. Train.** Runs the hyperparameter sweep. `SMOKE=1` does one config for three
+epochs first, to check the pipeline before committing to a full run.
+
+```bash
+SMOKE=1 python partA/sweep_dyn.py 61199SOM     # pipeline check
+python partA/sweep_dyn.py 61199SOM             # full sweep, 10 configs
+```
+
+To skip training entirely, use the committed `partA/models/<animal>/cfg06.ckpt`.
+That is the selected model and it reproduces every number in the paper.
+
+**3. Analyse.** Each script is standalone, prints its numbers, and writes a
+`*_stats.json`. Order does not matter.
+
+```bash
+python partA/analysis/fig3_attractor_cfg06.py   # fixed points, attractor spectrum
+python partA/analysis/fig_lever_traces.py       # lever decode, paper figure
+python partA/analysis/fig_crossanimal.py        # cross-animal alignment
+python partA/analysis/fig_flowfield.py          # flow field, both animals
+python partA/analysis/dyn_slide_a9.py           # cue-locked inferred input
+python partA/analysis/dyn_slide_a10.py          # steering cost, 75% vs 8%
+python partA/analysis/dyn_recompute_cosmooth.py # held-out-neuron comparison
+```
+
+Fixed-point scripts (`fig3_attractor_cfg06.py`, `dyn_slide_a10.py`) run 12,000
+Adam iterations from 512 seeds and take several minutes on a GPU. The rest run
+in under a minute.
+
+**Before running any of them**, edit the path constants at the top of the file:
+`ROOT` (LFADS output directory), `DST` (where figures go), and in
+`fig_lever_decode.py` / `fig_lever_traces.py` the `MultiSessionData` path to the
+behavioural `.mat` files.
+
+## Part B pipeline: real-time detection
+
+`partB/pipeline/` holds the causal front end. Every stage only looks backward in
+time, and filter and baseline state carry across file boundaries, so replaying a
+recording gives bit-identical output to the live stream.
+
+```
+.rhd files                               raw 20 kHz, 64 ch + lever + TTL
+   |
+   |  extractBehavioralEvents.m          -> behavioral_events.mat
+   |  find_reward_threshold.m            recovers the hardware reward voltage
+   |  genuine_pulls.m                    -> validated pull onsets
+   v
+labelled events
+   |
+   |  bin_both_ports.m                   -> binned_M1_M2.mat (skips raw re-reads)
+   |  train_best_model.m                 fits the readout
+   |  export_live_model.m                freezes it for the GUI
+   v
+trained detector
+   |
+   |  m1_realtime_test.m                 held-out + cross-day validation
+   |  closedloop_replay_real.m           full causal replay on a real session
+   |  closedloop_live_gui.m              live, streaming
+   |  shuffle_control.m                  base-rate-corrected null
+   v
+run_stats.mat  and  reported numbers
+```
+
+Typical order, from MATLAB with `partB/` and `partB/pipeline/` on the path:
+
+```matlab
+extractBehavioralEvents                  % script, walks the .rhd files
+find_reward_threshold                    % prints the hardware threshold
+[onset, thrV, amp] = genuine_pulls(sessionDir, 1.0);
+bin_both_ports(sessionDir, 64);          % Port B = M1, Port A = M2
+m1_realtime_test                         % AUC, lead times, cross-day
+shuffle_control('runs/run_<timestamp>/run_stats.mat')
+```
+
+Live detector:
+
+```matlab
+closedloop_live_gui                      % opens the GUI, RHD file mode
+closedloop_live_gui('selftest')          % headless, checks live == offline
+```
+
+Three data sources are selectable in the GUI: **RHD files** (raw files replayed
+through the full causal pipeline, no preprocessing needed), **RHX live** (TCP to
+the Intan RHX waveform port), and a synthetic source for testing. Each run writes
+its own `run_stats.mat`, which is what `shuffle_control.m` consumes.
+
+Cross-day and cross-area analyses are standalone:
+
+```matlab
+m1_crossday                              % Day1 model on Day2, aligned vs not
+m1_deploy_crossday                       % seeded calibration, early-session recall
+m1m2_timing                              % cross-correlation lag, ramp latency
+m1m2_cuefree_test                        % self-initiated only, M1 vs M2
+verify_m1m2                              % controls on the M2 comparison
+```
 
 ## Data
 
