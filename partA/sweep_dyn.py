@@ -6,7 +6,7 @@ Trains N full LFADS models with different regularization knobs on cue-aligned
 Usage:  python sweep_dyn.py <mouse>       e.g. 61199SOM
 Env:    SMOKE=1  -> 1 config, 3 epochs, no posterior sampling (pipeline check).
 """
-import os, sys, json, random, glob
+import os, os as _os, sys, json, random, glob
 from pathlib import Path
 import pandas as pd
 from lfads_torch.run_model import run_model
@@ -15,7 +15,7 @@ MOUSE = sys.argv[1] if len(sys.argv) > 1 else "61199SOM"
 CFG_START = int(sys.argv[2]) if len(sys.argv) > 2 else 0
 CFG_END = int(sys.argv[3]) if len(sys.argv) > 3 else None
 SMOKE = os.environ.get("SMOKE", "0") == "1"
-DATA = f"/home/tiwar133/lfads_sessions_{MOUSE}_20ms_FIXED/lfads_*.h5"
+DATA = _os.environ.get("BINNED_DIR", f"/home/tiwar133/lfads_sessions_{MOUSE}_20ms_FIXED") + "/lfads_*.h5"
 CFG  = f"../../lfads-torch/configs/lfads_{MOUSE}.yaml"   # relative to run_model.py location
 ROOT = Path.home()/"lfads_runs"/"sweep_dyn"/MOUSE
 ROOT.mkdir(parents=True, exist_ok=True)

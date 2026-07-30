@@ -20,7 +20,7 @@ from matplotlib.lines import Line2D
 from sklearn.decomposition import PCA
 
 torch.manual_seed(0); np.random.seed(0)
-DST = "/home/tiwar133/SURF_talk_figures"
+DST = RESULTS_DIR
 BIN, PRECUE, CLIP = 0.020, 1.5, 5.0
 dev = "cuda" if torch.cuda.is_available() else "cpu"
 MICE = [("61199SOM", "mouse 1"), ("61198SOM", "mouse 2")]
@@ -30,7 +30,7 @@ HIT, MISS, ARROW, INK, MUTED, GRID, SURFACE = (
 
 
 def load(mouse):
-    root = f"/home/tiwar133/lfads_runs/sweep_dyn/{mouse}/cfg06"
+    root = f"{LFADS_RUNS}/{mouse}/cfg06"
     ck = [p for p in glob.glob(f"{root}/checkpoints/*.ckpt") if "last" not in p][0]
     sd = torch.load(ck, map_location="cpu")["state_dict"]
     pf = "decoder.rnn.cell.gen_cell."
@@ -215,3 +215,10 @@ plt.close(fig)
 json.dump({m: dict(var2=float(F[m]["var2"]), arrows=int(len(F[m]["X"])))
            for m, _ in MICE}, open(f"{DST}/flowfield_stats.json", "w"), indent=2)
 print("done")
+import os as _os
+# Paths are read from environment variables so the repo runs anywhere.
+# Set them once (see README), or edit the defaults below.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

@@ -13,18 +13,18 @@ via trialId, common spike target, held-out neurons x held-out trials.
 import json, importlib.util, numpy as np
 
 spec = importlib.util.spec_from_file_location(
-    "rp", "/home/tiwar133/reproduce_lfads_paper.py")
+    "rp", _os.path.join(_os.path.dirname(__file__), "reproduce_lfads_paper.py"))
 rp = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(rp)
 
-GPFA = ("/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData/"
+GPFA = (f"{SESSION_DATA}/"
         "{mouse}/{day}/GPFA_fixedXDim15/GPFA_results.mat")
-SWEEP = ("/home/tiwar133/lfads_runs/sweep_dyn/{mouse}/{cfg}/"
+SWEEP = (f"{LFADS_RUNS}/{mouse}/{cfg}/"
          "lfads_output_lfads_{mouse}_{day}.h5")
 SESSIONS = [("61199SOM", d, "cfg06") for d in ["Day2", "Day3", "Day4", "Day5"]] + \
            [("61198SOM", d, "cfg06") for d in ["Day2", "Day3", "Day5", "Day7"]]
 
-old = json.load(open("/home/tiwar133/paper_figs_all/paper_figs_metrics.json"))
+old = json.load(open(_os.environ.get("OLD_METRICS", f"{RESULTS_DIR}/paper_figs_metrics.json")))
 rows = []
 print(f"{'session':<15}{'GPFA':>8}{'LFADS':>9}{'ratio':>8}{'(old LFADS)':>14}")
 for mouse, day, cfg in SESSIONS:
@@ -50,6 +50,13 @@ if rows:
     print(f"LFADS higher in {int((L>G).sum())}/{len(L)} sessions")
     print(f"ratio median {np.median(L/G):.1f}x  range {(L/G).min():.1f}-{(L/G).max():.1f}x")
     print(f"Wilcoxon p = {p:.4f}")
-    json.dump(rows, open("/home/tiwar133/SURF_talk_figures/cosmooth_sweep.json", "w"),
+    json.dump(rows, open(f"{RESULTS_DIR}/cosmooth_sweep.json", "w"),
               indent=2)
     print("-> cosmooth_sweep.json")
+import os as _os
+# Paths are read from environment variables so the repo runs anywhere.
+# Set them once (see README), or edit the defaults below.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

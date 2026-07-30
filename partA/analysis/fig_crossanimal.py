@@ -19,7 +19,7 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 np.random.seed(0)
-DST = "/home/tiwar133/SURF_talk_figures"
+DST = RESULTS_DIR
 BIN, PRECUE = 0.020, 1.5
 M1, M2 = "61199SOM", "61198SOM"
 BLUE, ORANGE, INK, MUTED, GRID, SURFACE = (
@@ -30,7 +30,7 @@ rng = np.random.default_rng(0)
 
 def mean_hit_paths(mouse):
     out = []
-    for f in sorted(glob.glob(f"/home/tiwar133/lfads_runs/sweep_dyn/{mouse}"
+    for f in sorted(glob.glob(f"{LFADS_RUNS}/{mouse}"
                               f"/cfg06/lfads_output_*.h5")):
         with h5py.File(f) as d:
             fa = np.concatenate([d["train_factors"][:], d["valid_factors"][:]])
@@ -68,8 +68,8 @@ nl_x = null_disparity(avg1, avg2)
 p_x = max((nl_x <= dis_x).mean(), 1 / len(nl_x))
 print(f"cross-animal: disparity {dis_x:.3f}  null {nl_x.mean():.3f}  p<{p_x:.4f}")
 
-rb = json.load(open("/home/tiwar133/dynamics_final/robustness.json"))
-m2j = json.load(open("/home/tiwar133/dynamics_final/robustness_61198_all.json"))
+rb = json.load(open(f"{ROBUST_DIR}/robustness.json"))
+m2j = json.load(open(f"{ROBUST_DIR}/robustness_61198_all.json"))
 v1 = np.array([r["marginal"][0] for r in rb])
 v2 = np.array([r["marginal"][0] for r in m2j])
 
@@ -99,3 +99,10 @@ ax.set_title("two animals, separate models", fontsize=26, weight="bold",
 fig.tight_layout()
 fig.savefig(f"{DST}/crossanimal.png", dpi=170, bbox_inches="tight", facecolor=SURFACE)
 print("-> crossanimal.png")
+import os as _os
+# Paths are read from environment variables so the repo runs anywhere.
+# Set them once (see README), or edit the defaults below.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

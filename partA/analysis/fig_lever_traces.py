@@ -27,7 +27,7 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 np.random.seed(0)
-DST = "/home/tiwar133/SURF_talk_figures"
+DST = RESULTS_DIR
 MOUSE, DAYS, SHOW = "61199SOM", ["Day2", "Day3", "Day4", "Day5"], "Day5"
 BIN, PRECUE = 0.020, 1.5
 LAGS = list(range(-3, 9))                    # -60 ms .. +160 ms
@@ -40,12 +40,12 @@ def rebin(x, n=150):
 
 
 def load(day):
-    with h5py.File(f"/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData/"
+    with h5py.File(f"{SESSION_DATA}/"
                    f"{MOUSE}/{day}/Spikes.mat") as f:
         ib = f["IntanBehaviour"]
         hit = np.stack([rebin(f[ib["cueHitTrace"]["trace"][i, 0]][:].ravel())
                         for i in range(ib["cueHitTrace"]["trace"].shape[0])])
-    with h5py.File(f"/home/tiwar133/lfads_runs/sweep_dyn/{MOUSE}/cfg06/"
+    with h5py.File(f"{LFADS_RUNS}/{MOUSE}/cfg06/"
                    f"lfads_output_lfads_{MOUSE}_{day}.h5") as f:
         gs = np.concatenate([f["train_gen_states"][:], f["valid_gen_states"][:]])
         nn = f["train_encod_data"].shape[2]
@@ -147,3 +147,10 @@ out.update(lags_ms=[LAGS[0] * 20, LAGS[-1] * 20], shown=SHOW,
            null_mean=float(null.mean()), null_sd=float(null.std()))
 json.dump(out, open(f"{DST}/lever_decode_stats.json", "w"), indent=2)
 print("-> lever_decode.png")
+import os as _os
+# Paths are read from environment variables so the repo runs anywhere.
+# Set them once (see README), or edit the defaults below.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

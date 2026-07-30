@@ -3,8 +3,8 @@
 import numpy as np, h5py, glob, json, torch
 torch.manual_seed(0); np.random.seed(0)
 MARG, CLIP = 0.01, 5.0
-OUT = "/home/tiwar133/dynamics_final"
-ROOT = "/home/tiwar133/lfads_runs/sweep_dyn/61198SOM"
+OUT = ROBUST_DIR
+ROOT = f"{LFADS_RUNS}/61198SOM"
 dev = "cuda" if torch.cuda.is_available() else "cpu"
 
 
@@ -79,3 +79,10 @@ mg = [r["marginal"][0] for r in res]
 print(f"\nmouse 2 marginal modes: {np.mean(mg):.1f} +/- {np.std(mg):.1f} "
       f"(range {min(mg):.0f}-{max(mg):.0f}) across {len(res)} models")
 json.dump(res, open(f"{OUT}/robustness_61198_all.json", "w"), indent=2)
+import os as _os
+# Paths are read from environment variables so the repo runs anywhere.
+# Set them once (see README), or edit the defaults below.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

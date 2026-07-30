@@ -1,0 +1,8 @@
+# Part A. Install lfads-torch separately (see README), it pulls in torch.
+numpy>=1.21
+scipy>=1.7
+h5py>=3.0
+scikit-learn>=1.0
+matplotlib>=3.5
+pandas>=1.3
+pyyaml>=5.4

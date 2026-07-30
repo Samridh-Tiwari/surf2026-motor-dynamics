@@ -1,3 +1,4 @@
+import os as _os
 # import h5py
 # import numpy as np
 # import os
@@ -60,8 +61,8 @@ import h5py
 import numpy as np
 import os
 
-INPUT_H5 = '/mnt/c/Users/tiwar133/gpfa_v0203/lfads_stitch_data.h5'
-OUT_DIR  = '/home/tiwar133/lfads_sessions_61199SOM_20ms_FIXED'
+INPUT_H5 = _os.environ.get('STITCH_H5', '/mnt/c/Users/tiwar133/gpfa_v0203/lfads_stitch_data.h5')
+OUT_DIR  = _os.environ.get('BINNED_DIR', '/home/tiwar133/lfads_sessions_61199SOM_20ms_FIXED')
 SESSIONS = ['dataset_05', 'dataset_06', 'dataset_07', 'dataset_08']
 LABELS   = ['61199SOM_Day2', '61199SOM_Day3', '61199SOM_Day4', '61199SOM_Day5']
 REBIN    = 20       # 1ms -> 20ms bins

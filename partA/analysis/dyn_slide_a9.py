@@ -14,7 +14,7 @@ from scipy.stats import mannwhitneyu
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-DST = "/home/tiwar133/SURF_talk_figures"
+DST = RESULTS_DIR
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 INK, MUTED, GRID, SURFACE = "#0b0b0b", "#52514e", "#dcdbd7", "#ffffff"
 DT, ONSET, SKIP, CFG, NPERM = 0.020, 75, 12, "cfg06", 2000
@@ -32,7 +32,7 @@ stats = {}
 for ax, (mouse, label) in zip(axes, [("61199SOM", "mouse 1"), ("61198SOM", "mouse 2")]):
     U, C = [], []
     for p in sorted(glob.glob(
-            f"/home/tiwar133/lfads_runs/sweep_dyn/{mouse}/{CFG}/lfads_output_*.h5")):
+            f"{LFADS_RUNS}/{mouse}/{CFG}/lfads_output_*.h5")):
         with h5py.File(p) as f:
             U.append(np.concatenate([f["train_gen_inputs"][:], f["valid_gen_inputs"][:]]))
             C.append(np.concatenate([f["train_condition"][:].ravel(),
@@ -84,3 +84,10 @@ fig.savefig(f"{DST}/SlideA9_cue_is_the_push.png", dpi=170,
             bbox_inches="tight", facecolor=SURFACE)
 json.dump(stats, open(f"{DST}/cue_stats_cfg06.json", "w"), indent=2)
 print("-> SlideA9_cue_is_the_push.png")
+import os as _os
+# Paths are read from environment variables so the repo runs anywhere.
+# Set them once (see README), or edit the defaults below.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

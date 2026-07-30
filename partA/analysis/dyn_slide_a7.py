@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 
 torch.manual_seed(0); np.random.seed(0)
-DST = "/home/tiwar133/SURF_talk_figures"
-OUT = "/home/tiwar133/dynamics_final"
+DST = RESULTS_DIR
+OUT = ROBUST_DIR
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 INK, MUTED, GRID, SURFACE = "#0b0b0b", "#52514e", "#dcdbd7", "#ffffff"
 DT, MARG, CLIP = 0.020, 0.01, 5.0
@@ -40,7 +40,7 @@ class GenCell(torch.nn.Module):
         return torch.clamp(z * h + (1 - z) * n, -CLIP, CLIP)
 
 
-ROOT = "/home/tiwar133/lfads_runs/sweep_dyn/61199SOM/cfg06"
+ROOT = f"{LFADS_RUNS}/61199SOM/cfg06"
 ck = [p for p in glob.glob(f"{ROOT}/checkpoints/*.ckpt") if "last" not in p][0]
 cell = GenCell(torch.load(ck, map_location="cpu")["state_dict"])
 G = np.concatenate([np.concatenate([h5py.File(p)["train_gen_states"][:],
@@ -157,3 +157,10 @@ json.dump(dict(n_marginal=float(n_marg), n_stable=float(n_stab),
                n_unstable=float(n_unst), tau_median_ms=float(np.median(tau) * 1000),
                n_fixed_points=int(len(FP)), ambient=int(cell.H)),
           open(f"{DST}/groove_stats.json", "w"), indent=2)
+import os as _os
+# Paths are read from environment variables so the repo runs anywhere.
+# Set them once (see README), or edit the defaults below.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

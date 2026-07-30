@@ -1,3 +1,4 @@
+import os as _os
 
 #!/usr/bin/env python3
 
@@ -31,9 +32,9 @@ import numpy as np
 
 import os
 
-INPUT_H5 = '/mnt/c/Users/tiwar133/gpfa_v0203/lfads_stitch_data.h5'
+INPUT_H5 = _os.environ.get('STITCH_H5', '/mnt/c/Users/tiwar133/gpfa_v0203/lfads_stitch_data.h5')
 
-OUT_DIR  = '/home/tiwar133/lfads_sessions_61198SOM_20ms_FIXED'
+OUT_DIR  = _os.environ.get('BINNED_DIR', '/home/tiwar133/lfads_sessions_61198SOM_20ms_FIXED')
 
 SESSIONS = ['dataset_01', 'dataset_02', 'dataset_03', 'dataset_04']
 

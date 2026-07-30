@@ -18,12 +18,12 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 torch.manual_seed(0); np.random.seed(0)
-DST = "/home/tiwar133/SURF_talk_figures"
+DST = RESULTS_DIR
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 INK, MUTED, GRID, SURFACE = "#0b0b0b", "#52514e", "#dcdbd7", "#ffffff"
 DT, MARG, CLIP, AMP = 0.020, 0.01, 5.0, 1.0
 dev = "cuda" if torch.cuda.is_available() else "cpu"
-ROOT = "/home/tiwar133/lfads_runs/sweep_dyn/61199SOM/cfg06"
+ROOT = f"{LFADS_RUNS}/61199SOM/cfg06"
 
 
 class GenCell(torch.nn.Module):
@@ -199,3 +199,10 @@ json.dump(dict(groove_retained=float(Kg.mean(0)[-1]), off_retained=float(Ko.mean
                n_fp=int(len(FP))),
           open(f"{DST}/steering_stats.json", "w"), indent=2)
 print("-> SlideA10_cost_of_steering.png")
+import os as _os
+# Paths are read from environment variables so the repo runs anywhere.
+# Set them once (see README), or edit the defaults below.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

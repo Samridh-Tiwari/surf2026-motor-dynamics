@@ -12,6 +12,33 @@ forelimb motor cortex during a cued lever-pull task.
 
 ---
 
+## Quick start
+
+```bash
+git clone https://github.com/Samridh-Tiwari/surf2026-motor-dynamics.git
+cd surf2026-motor-dynamics
+pip install -r requirements.txt
+
+cp paths.env paths.local.env      # edit the two paths at the top
+source paths.local.env
+```
+
+**To check a number without running anything**, open `partA/results/`. Every
+value quoted in the paper is there as JSON, with the table below saying which
+file holds which number.
+
+**To regenerate a figure**, you need `LFADS_RUNS` pointing at LFADS outputs.
+Then, for example:
+
+```bash
+python partA/analysis/fig_crossanimal.py
+```
+
+Paths come from environment variables, so nothing needs editing inside the
+scripts. The variables are listed in `paths.env`.
+
+---
+
 ## Where each number in the paper comes from
 
 | Reported value | Script | Output |
@@ -121,10 +148,8 @@ Fixed-point scripts (`fig3_attractor_cfg06.py`, `dyn_slide_a10.py`) run 12,000
 Adam iterations from 512 seeds and take several minutes on a GPU. The rest run
 in under a minute.
 
-**Before running any of them**, edit the path constants at the top of the file:
-`ROOT` (LFADS output directory), `DST` (where figures go), and in
-`fig_lever_decode.py` / `fig_lever_traces.py` the `MultiSessionData` path to the
-behavioural `.mat` files.
+All paths come from the environment variables in `paths.env`. Nothing inside
+the scripts needs editing.
 
 ## Part B pipeline: real-time detection
 

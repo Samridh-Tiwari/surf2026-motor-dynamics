@@ -1,12 +1,12 @@
 %% EXTRACT BEHAVIORAL EVENTS
-% Walks the same 38 .rhd files as phase1_spike_detection.m and pulls out
+% Walks the session .rhd files and pulls out
 % the task's ground-truth event channels:
 %   ANALOG-IN-2   -> lever trace (continuous)
 %   DIGITAL-IN-04 -> cue onset
 %   DIGITAL-IN-03 -> reward dispense
 %
 % Timestamps are placed on the SAME running clock (time_offset accumulated
-% by n_samples/fs per file, identical convention to phase1_spike_detection.m)
+% by n_samples/fs per file)
 % so cue/reward/lever times are directly comparable to spike/bin times with
 % no extra alignment step.
 
