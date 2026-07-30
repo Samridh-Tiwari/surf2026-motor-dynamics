@@ -1,0 +1,18 @@
+# data lives on Box, never commit it here
+*.h5
+*.rhd
+*.mat
+!partA/results/*.json
+
+# build and cache
+__pycache__/
+*.pyc
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.pdf
+.DS_Store
+Thumbs.db

@@ -1,0 +1,18 @@
+{
+  "day_disparities": [
+    0.02154864285394218,
+    0.12975436596616227,
+    0.2067854173868508
+  ],
+  "day_labels": [
+    "Day3",
+    "Day4",
+    "Day5"
+  ],
+  "reference": "Day2",
+  "cross_animal": 0.10951038900461016,
+  "cross_animal_null": 0.9908540127403316,
+  "cross_animal_null_sd": 0.00788443946795141,
+  "marginal_median_m1": 34.0,
+  "marginal_median_m2": 35.86666666666667
+}

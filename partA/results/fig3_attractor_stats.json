@@ -1,0 +1,11 @@
+{
+  "model": "cfg06",
+  "n_fixed_points": 512,
+  "n_sampled": 60,
+  "marginal": 33.18333333333333,
+  "stable": 94.73333333333333,
+  "unstable": 0.08333333333333333,
+  "tau_median_ms": 83.67025852203369,
+  "pr_fixed_points": 18.969452826891345,
+  "pr_data": 10.675971615536582
+}

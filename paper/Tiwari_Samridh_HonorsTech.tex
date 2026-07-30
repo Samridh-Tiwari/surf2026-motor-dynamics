@@ -1,0 +1,533 @@
+\documentclass[10pt,twocolumn]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.7in]{geometry}
+\setlength{\columnsep}{0.24in}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{titlesec}
+\usepackage{stfloats}
+\usepackage{balance}
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.75}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.80}
+
+\titlespacing*{\section}{0pt}{0.9ex}{0.4ex}
+\titlespacing*{\subsection}{0pt}{0.7ex}{0.3ex}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
+\setlist{nosep,leftmargin=1.2em}
+\setlength{\parskip}{0.2ex}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{0pt}
+\raggedbottom
+\setlength{\floatsep}{8pt plus 1pt minus 1pt}
+\setlength{\textfloatsep}{10pt plus 1pt minus 1pt}
+\setlength{\intextsep}{8pt plus 1pt minus 1pt}
+\setlength{\dblfloatsep}{8pt plus 1pt minus 1pt}
+\setlength{\dbltextfloatsep}{10pt plus 1pt minus 1pt}
+
+\title{\vspace{-2.4em}\large A Continuous Attractor in Mouse Motor Cortex,
+and a Causal Readout for Closed-Loop Intervention}
+\author{
+Samridh Tiwari$^{1,2}$ \quad Om Kolhe$^{1}$ \quad Krishna Jayant$^{1}$\\[2pt]
+\small $^{1}$Nano Neurotechnology Laboratory, Weldon School of Biomedical
+Engineering, Purdue University, West Lafayette, IN 47907\\
+\small $^{2}$Indian Institute of Technology Bombay, Mumbai 400076, India\\[1pt]
+\small \texttt{tiwar133@purdue.edu} $\cdot$ \texttt{samridhtiwari2@gmail.com}}
+\date{\vspace{-1.6em}}
+
+\begin{document}
+\makeatletter
+\twocolumn[
+  \begin{@twocolumnfalse}
+  \maketitle
+  \vspace{-2.4em}
+  \begin{abstract}\noindent\small
+A motor plan must be both \emph{held} against noise and \emph{changed} when new
+information arrives. We fit LFADS to spiking activity from two mice (9 sessions,
+39--118 neurons) in a cued lever-pull task. It beat GPFA at matched latent
+dimensionality on entirely held-out neurons in 8 of 8 fitted sessions (median
+$4.1\times$), and a lagged linear readout of its state recovered the continuous
+lever trajectory on held-out trials ($R^2=0.47$--$0.77$). Run autonomously from
+one inferred initial condition with all input removed, the learned rule
+reproduced 94\% of pre-cue single-trial latent variance against 2\% for a
+condition-mean predictor. Linearising the generator at 512 fixed points revealed
+a \textbf{continuous attractor}: $\sim$33 marginally stable directions, $\sim$95
+relaxing within $\sim$84~ms, and essentially none unstable, replicated across
+five models per animal and both animals. Perturbations along the manifold
+retained 75\% of their magnitude after 1.2~s against 8\% off-manifold. Because
+every such estimate is acausal, we built a \textbf{causal real-time detector} of
+impending movement from unsorted multiunit activity: streaming live it flagged
+movement a median of \textbf{80~ms before lever motion} at \textbf{under 1~ms
+compute per 20~ms bin}, beating a circular-shift null by 6.7~s.d.\ in precision.
+Zero-shot cross-day transfer collapsed to chance (AUC 0.485) but was restored by
+latent alignment (0.740 against a 0.768 within-day ceiling), localising the
+failure to a rotation of readout coordinates rather than a change in dynamics.
+  \end{abstract}
+  \vspace{1.0em}
+  \end{@twocolumnfalse}
+]
+\makeatother
+
+\section{Introduction and Background}
+
+A voluntary movement is preceded by a preparatory period in which motor cortical
+activity evolves without producing muscle output \cite{churchland2012}.
+This activity occupies a low-dimensional subspace with reproducible trajectories, and trajectories rather than single-neuron tuning are the
+right level of description \cite{churchland2012}.
+
+This creates a tension: the plan must be \emph{stable}, or noise corrupts it,
+yet \emph{changeable}, or a cue cannot move it. A classical resolution is a
+\textbf{continuous attractor}, a connected manifold of marginally stable
+states \cite{seung1996,zhang1996}. Displacements along it neither grow nor decay,
+so information is held; displacements off it are corrected, so noise is
+rejected. Continuous attractors are established for head-direction and
+oculomotor integration \cite{zhang1996}, but evidence in motor
+preparation is sparser, because the analysis needs a \emph{generative model of
+the dynamics}, not a description of trajectories. LFADS \cite{pandarinath2018}
+supplies one: a sequential variational autoencoder whose decoder is trained to
+generate the observed spikes. Once fit, the generator is a dynamical system that
+can be interrogated directly: fixed points located numerically, Jacobians
+computed exactly, stability read from the eigenspectrum \cite{sussillo2013}.
+
+Our motivation is interventional: to nudge a plan toward a successful
+configuration, a closed-loop system needs a target state, a model of what a
+perturbation does, and a real-time estimate of where the circuit is. Part~A
+addresses the first two; Part~B the third.
+
+\section{Methods}
+
+\subsection{Task, recordings, preprocessing}
+
+Two mice (\texttt{61199SOM}, \texttt{61198SOM}) performed a cued forelimb
+lever-pull task; a tone signalled trial onset and a successful pull (``Hit'')
+was rewarded with water. Spiking was recorded from forelimb motor cortex across
+\textbf{9 sessions} (4 and 5 per animal), \textbf{39--118} isolated units per
+session, trials aligned to cue onset from $-1.5$ to $+1.5$~s. LFADS was fit on
+the 8 sessions in the stitched archive: \texttt{61199SOM}, 1163 trials (844
+Hit); \texttt{61198SOM}, 956 trials (595 Hit). Counts were rebinned to
+\textbf{20~ms} (150 bins/trial), split chronologically 80/20; no smoothing
+preceded fitting. Part~B sessions used a 64-channel silicon probe at 20~kHz
+(Intan RHD2000) with analog lever position and TTL cue/reward lines on one
+clock; two dual-probe sessions recorded M1 and M2 simultaneously. \textbf{No
+spike sorting was performed in Part~B}. The detector uses threshold-crossing
+multiunit activity, preserving population structure while removing a step that
+cannot be done reliably online \cite{trautmann2019}.
+
+\subsection{Models, selection, evaluation}
+
+\textbf{LFADS} \cite{pandarinath2018} was fit with \texttt{lfads-torch}
+\cite{sedler2023}, multi-session with per-session read-in/read-out and a shared
+generator: 128-unit generator, 15 factors, controller output 4,
+initial-condition dimension 64, dropout 0.1, batch 32, lr $4\times10^{-3}$,
+Poisson observations. \textbf{GPFA} \cite{yu2009} was fit at matched
+dimensionality (\texttt{xDim}=15). A sweep over KL and L2 scales gave 10
+configurations per animal, ranked by validation reconstruction loss; we then
+computed an \textbf{autonomy score} (correlation between the generator run
+forward from its inferred initial condition with input zeroed, and the full
+model) and selected \texttt{cfg06}, not the reconstruction winner
+(\S\ref{sec:sel}).
+
+\textbf{Held-out-neuron co-smoothing} \cite{pei2021}: neurons and trials each
+split into 5 folds; factors inferred from retained neurons, a Poisson GLM fit to
+each held-out neuron, log-likelihood scored on held-out
+neurons~$\times$~held-out trials as bits/spike against that neuron's mean rate.
+Both models used an identical target and GLM, isolating latent quality.
+\textbf{Kinematic decoding} used a lagged ridge readout ($-60$ to $+160$~ms of
+generator state), 5-fold cross-validated across trials, against the
+training-set average pull as baseline.
+
+\textbf{Fixed points} were located by minimising
+$\|f(\mathbf{g},\mathbf{0})-\mathbf{g}\|^2$ with Adam (lr $2\times10^{-2}$,
+cosine annealing to $10^{-5}$, 12{,}000 iterations) from 512 initialisations
+drawn from observed states with noise ($\sigma=0.05$) \cite{sussillo2013}, kept if relative displacement fell below
+$10^{-3}$. Jacobians came from exact autodifferentiation of the trained GRU
+cell; directions were classed \textbf{marginal} ($\big||\lambda|-1\big|<0.01$),
+\textbf{stable} ($|\lambda|<0.99$) or \textbf{unstable} ($|\lambda|>1.01$),
+$\tau=-\Delta t/\ln|\lambda|$. For \textbf{perturbation analysis} the full
+nonlinear generator was displaced from a fixed point along a marginal or random
+non-marginal eigendirection and released; the eigendecomposition selects the
+direction only, all simulation uses the trained network.
+
+\subsection{Causal real-time detection}
+
+Every estimate above depends on $g_0$, which LFADS infers with a bidirectional
+encoder spanning the whole trial (tip~3); none can be produced online. Part~B
+asks a narrower question: can the \textbf{trigger} a closed-loop system needs be
+obtained causally, within the latency the behaviour allows?
+
+A discriminative detector runs single-pass over the raw stream: common-median
+referencing across 64 channels; a causal 3rd-order Butterworth high-pass at
+300~Hz; a per-channel adaptive threshold at $4\times$ a running
+median-absolute-deviation estimate; crossings with 1~ms refractory; accumulation
+into \textbf{20~ms bins}; z-scoring; and concatenation of the \textbf{12 most
+recent bins (240~ms)} into a $64\times12=768$-D vector. Filter and baseline
+states carry across file boundaries and never reset, so output on a recording is
+identical to the live stream. An alarm fires when the projected score exceeds
+$\theta$ for two consecutive bins (40~ms dwell). Two readouts were compared: a
+regularised Fisher discriminant, and a PCA-whitened cosine similarity to a
+movement template, bounded to $[-1,1]$.
+
+Training uses lever-derived labels only; cue timing is never supplied, so the
+detector is agnostic to whether a movement is cued or self-initiated. Positives
+are bins in $[-200,0]$~ms before a pull reaching the hardware reward threshold
+(tip~4); negatives are bins $>2$~s from any pull at rest. Cross-validation is
+\textbf{time-blocked}. Baselines: an unsupervised CUSUM \cite{page1954} ramp
+detector on the first principal component of the same features; and a
+\textbf{circular-shift null} rotating alarm times on the session clock,
+preserving alarm rate and periodicity while destroying only alignment to
+movement. This matters because the animal pulls every $\sim$3.7~s. Cross-day
+transfer was tested zero-shot, then after Procrustes registration in the 15-D
+latent space using pull-triggered averages as anchors
+\cite{gallego2020,degenhart2020}.
+
+\subsection{Sample, Code, and Data Storage}
+
+All data, analysis code, and editable figure sources will be deposited in one
+documented public repository:
+\url{https://github.com/Samridh-Tiwari/surf2026-motor-dynamics}. The deposit
+includes \textbf{pre-processed} data (raw spike archives and Intan \texttt{.rhd}
+recordings with their behavioural channels), \textbf{post-processed} data
+(rebinned model inputs, LFADS outputs, binned dual-probe arrays), and
+\textbf{editable figure sources}, each figure being produced by a committed
+script that also emits a \texttt{*\_stats.json} of the values it reports. The
+\texttt{README} lists every file and maps each figure and reported number to the
+script that generates it.
+
+\textbf{Labelling scheme.} Animals \texttt{61199SOM} and \texttt{61198SOM};
+sessions \texttt{Day2}--\texttt{Day7} within an animal; the stitched archive
+indexes these as \texttt{dataset\_01}--\texttt{08}; LFADS configurations
+\texttt{cfg01}--\texttt{cfg10}, with \texttt{cfg06} selected throughout.
+Environment: conda \texttt{lfads-torch} with PyTorch/CUDA (Part~A) and MATLAB
+R2026a (Part~B); all stochastic procedures are seeded, so the reported numbers
+reproduce exactly.
+
+\subsection{Reference Methods}
+
+LFADS: \url{https://github.com/arsedler9/lfads-torch} \cite{sedler2023}. GPFA:
+\url{https://github.com/NeuralEnsemble/elephant} \cite{yu2009}. Fixed-point
+location follows \cite{sussillo2013}, co-smoothing the Neural Latents Benchmark
+protocol \cite{pei2021}, and sorting-free population analysis
+\cite{trautmann2019}.
+
+\subsection{Insider Tips}
+
+\begin{enumerate}
+\item The LFADS factor read-out is \texttt{KernelNormalizedLinear}, which
+L2-normalises each weight row; a plain matmul with the stored weights does
+\textbf{not} reproduce the saved factors. Apply
+\texttt{F.normalize(W,p=2,dim=1)} first.
+\item \texttt{gen\_init} is the 128-D generator state \emph{after} the
+\texttt{ic\_to\_g0} projection, not the 64-D initial-condition sample; saved
+\texttt{gen\_states} are posterior means over 50 samples, so re-simulating from
+the mean does not reproduce them exactly.
+\item The initial-condition encoder is \textbf{bidirectional over the whole
+trial}, so anything computed from $g_0$ or the factors is acausal, which motivates Part~B.
+\item \textbf{The lever threshold triggering reward is fixed hardware and must be
+recovered as an absolute voltage, not a session statistic} (2.8197 and 2.8188~V
+on two days). Thresholds from the median absolute deviation or amplitude
+percentiles drift and silently admit sub-threshold micro-movements; on one
+session this inflated the pull count from 864 to 2702. Recover it from the lower
+edge of the peak lever voltage preceding each reward.
+\item Behavioural events live in the raw \texttt{.rhd} files
+(\texttt{ANALOG-IN-2}=lever, \texttt{DIGITAL-IN-04}=cue,
+\texttt{DIGITAL-IN-03}=reward), not the exported workspace; the default Intan
+reader discards analog board channels. Carry causal filter and baseline state
+across file boundaries, since re-initialising per file produces a transient the
+detector reads as movement.
+\item Kinematic decoding needs a \textbf{lagged} readout: an instantaneous one
+scores $R^2=0.32$ where a lagged one reaches 0.77, because motor cortex leads
+movement.
+\end{enumerate}
+
+\subsection{Deviations from Standard Methodology}
+
+\begin{enumerate}
+\item \textbf{Model selection} on autonomy subject to near-best reconstruction,
+because reconstruction is insensitive to the dynamics/input trade-off
+(\S\ref{sec:sel}).
+\item \textbf{Perturbation actuator.} Time-varying LQR through the model's 4
+inferred input channels yields 0.1\% error reduction, because those channels have
+negligible authority over a 128-D state. We therefore perturb the state
+directly, reflecting a physical intervention.
+\item \textbf{GPFA dimensionality} fixed at 15 to match LFADS rather than
+cross-validated (stored \texttt{cvLL} is empty): a matched comparison, not one
+at each method's own optimum.
+\item \textbf{Readout selection} favours the bounded cosine over the Fisher
+discriminant despite indistinguishable held-out accuracy, on robustness grounds.
+\item \textbf{Cross-validation} is time-blocked, not random $k$-fold; random
+folds leak between adjacent trials and inflated one cross-area difference by
+$\sim$40\%.
+\end{enumerate}
+
+\subsection{Methods Planned for Completion}
+
+In progress: \textbf{causal state estimation} (a forward-only encoder over a
+fixed past window, replacing the bidirectional one, to obtain a manifold
+coordinate online rather than a binary trigger), and an \textbf{optogenetic
+protocol} stimulating along versus across the manifold, gated by the validated
+trigger.
+
+\section{Results}
+
+\subsection{Latent quality}
+
+PCA of trial-averaged activity showed $\sim$3 components capturing 95\% of
+variance with no increase as neuron count rose (Spearman $r=-0.16$, $p=0.70$).
+Since smoothing inflates this, we use it only to justify a 15-D latent space
+chosen with headroom rather than fitted.
+
+LFADS achieved higher held-out-neuron predictive information in \textbf{8 of 8
+fitted sessions} (0.303 vs 0.080 bits/spike; median ratio $\mathbf{4.1\times}$,
+range 2.6--5.9$\times$). A two-sided Wilcoxon signed-rank test gives $p=0.008$,
+but that is the \emph{smallest value attainable with 8 paired samples}
+($2/2^8=0.0078$), so it confirms only that every session favoured LFADS and says
+nothing about effect size; the effect size is the ratio. Held-out neurons are
+never seen by either model, so this cannot be satisfied by memorisation. We hold
+out \emph{neurons} rather than \emph{trials} deliberately: LFADS infers
+per-trial initial conditions and inputs, so it fits trials nearly by
+construction.
+
+A lagged linear readout of the generator state also recovers the
+\emph{continuous lever trajectory} on held-out trials (Fig.~\ref{fig:lever}), $R^2=0.47$--$0.77$ across
+four sessions, against 0.26--0.68 for predicting each held-out trial with the
+training-set average pull, a strong baseline given how
+stereotyped the movement is. The model was fit to spikes alone and never saw the lever.
+
+\begin{figure}[!htb]\centering
+\includegraphics[width=\columnwidth]{lever_decode_traces.png}
+\caption{A model fit to spikes alone predicts the lever. Five held-out trials:
+real lever position (grey) and the lagged linear readout of generator state
+(green), each trial excluded from the fold that predicts it. Across four
+sessions $R^2=0.47$--$0.77$, against 0.26--0.68 for the training-set average
+pull.}
+\label{fig:lever}
+\end{figure}
+
+\subsection{Reconstruction loss selects against interpretable dynamics}
+\label{sec:sel}
+
+The sweep's reconstruction winner (\texttt{cfg01}) proved unsuitable for
+dynamical analysis: run autonomously its generator reproduced only 48\% of the
+state trajectory (45\% in mouse~2), the rest being carried by inferred inputs.
+\texttt{cfg06}, at 1.8\% worse reconstruction, was \textbf{97\% autonomous}
+(86\% in mouse~2), and the ordering held in both animals. The two differ in
+exactly one respect: \texttt{kl\_co\_scale} is $10\times$ smaller in
+\texttt{cfg01}. A weaker penalty on controller outputs lets the model explain
+data with injected input, which reconstruction loss rewards equally to
+explaining it with dynamics. \textbf{Reconstruction loss is therefore not a
+valid selection criterion when the claim concerns intrinsic dynamics.}
+
+Iterating \texttt{cfg06} from one inferred initial condition with \textbf{all
+input removed} reproduced 94\% (pre-cue) and 82\% (post-cue) of single-trial
+latent variance. Three controls: a condition-mean predictor achieved
+$R^2=0.02/0.03$, so trials are not stereotyped; held-out trials scored 0.96/0.78
+against 0.93/0.82 on training trials, so there is no overfitting; a shuffled
+initial condition gave $R^2<0$. Because $g_0$ is inferred from the whole trial
+this concerns \textbf{compressibility}, not prediction.
+
+\subsection{A continuous attractor}\label{sec:attractor}
+
+All 512 seeds converged to distinct fixed points, itself the signature of a
+connected manifold rather than isolated attractors. Across 60 sampled fixed
+points, eigendecomposed Jacobians gave \textbf{33.2 marginal}, \textbf{94.7
+stable} and \textbf{0.08 unstable} directions per fixed point, stable directions
+relaxing at median $\tau=84$~ms (Fig.~\ref{fig:attr}). The absence of unstable
+directions held in every model examined, and the structure replicated across
+\textbf{five independently trained models per animal} (median marginal count 34,
+range 20--46 in mouse~1; 36, range 8--50 in mouse~2). Marginal subspace
+dimensionality varies with regularisation and sampling; its existence, and the
+absence of unstable directions, do not. Mean successful-trial paths from
+different sessions, and from the two animals' separately trained models, match
+after rigid alignment in the 15-D factor space (shape difference 0.02--0.21
+across sessions, 0.11 across animals; 1.00 is chance;
+Fig.~\ref{fig:gen}).
+
+\begin{figure}[!htb]\centering
+\includegraphics[width=\columnwidth]{crossanimal.png}
+\caption{Mean successful-trial path from the two animals, fit by separate models
+with no shared parameters, after shift, scale and rotation only. Dots mark cue
+onset. Compared in the model's full 15-dimensional output space the shape
+difference is 0.11, against 0.99$\pm$0.01 for alignment to a time-scrambled
+target.}
+\label{fig:gen}
+\end{figure}
+
+\begin{figure*}[!tb]\centering
+\includegraphics[width=0.88\textwidth]{fig3_attractor_spectrum.png}
+\caption{The trained generator implements a continuous attractor.
+\emph{Left}, exact Jacobian eigenvalues at converged fixed points against the
+unit circle; the spectrum crowds the circle from inside with essentially nothing
+outside. \emph{Centre}, sorted eigenvalue magnitude per fixed point (mean $\pm$
+s.d.): a plateau of marginal modes at $|\lambda|\approx1$ gives way to a
+decaying stable spectrum. \emph{Right}, the fixed-point manifold is
+low-dimensional, comparable to the data. Selected model \texttt{cfg06},
+\texttt{61199SOM}, 512 converged fixed points.}
+\label{fig:attr}
+\end{figure*}
+
+\subsection{The cue as inferred input; the cost of intervening}
+
+The model received spike trains only, never cue timing and never outcome, yet
+the inferred input $\|\mathbf{u}_t\|$ was flat before the cue and rose sharply
+after, peaking at \textbf{1.73$\times$ baseline at $+100$~ms} (mouse~1) and
+\textbf{2.18$\times$ at $+140$~ms} (mouse~2), and larger on successful trials
+($P(\text{Hit}>\text{Miss})=0.619$ and $0.813$; 2000-fold permutation null 95th
+percentile 0.532). The modulation differs in size between animals, the
+cue-locked transient does not.
+
+Displacing the full nonlinear network along a marginal direction left
+\textbf{75\%} of the displacement intact after 1.2~s; along a random
+non-marginal direction, \textbf{8\%} survived. A transient intervention
+therefore persists only if aimed within the manifold. The behaviourally relevant
+axis lay preferentially within it (0.352 of its energy versus 0.254 expected;
+$1.38\times$, exceeding all 400 random directions, $p<0.0025$). The effect is modest, since most of that direction remains off-manifold, so steering behaviour requires sustained rather than impulsive input. The geometry is nonetheless not arbitrary with respect to behaviour.
+
+\subsection{A causal detector flags movement before it occurs}
+
+On held-out data the detector reached \textbf{AUC 0.877}, catching 60\% of
+movements at $\sim$5 false alarms per minute, with alarms a median of
+\textbf{63~ms} early and \textbf{92\%} arriving before the movement ($n=199$).
+The unsupervised CUSUM baseline on the same features did worse, so the
+supervised projection, not the front end, carries the discrimination.
+
+Deployed live, calibrating from the lever as the session ran, it flagged
+movement a median of \textbf{80~ms} before lever motion, \textbf{90\%} of alarms
+early and \textbf{71\%} followed by a real movement, of which \textbf{46
+preceded self-initiated} and \textbf{20 cued} pulls, from a single template never
+told which was which.
+
+\textbf{Latency.} Median compute was \textbf{under 1~ms per 20~ms bin} on one
+CPU core, under 5\% of budget, so the irreducible latency is structural: the
+20~ms bin plus 40~ms dwell give a 60~ms floor. Against the time-resolved
+analysis below, which finds movement decodable from $\sim$140~ms before onset,
+$140-60=80$~ms is the predicted lead, and that is what the live system delivers.
+
+\textbf{Readout choice.} Both readouts achieved indistinguishable held-out AUC
+(0.83--0.85) but differ in the tails: the Fisher discriminant is unbounded and
+produced rest-period excursions of 6--23~s.d., intermittently straddling its
+threshold live and firing on artefacts. \textbf{At equal nominal accuracy,
+bounded scores should be preferred for closed-loop use}, a distinction invisible
+to offline AUC.
+
+\textbf{Base-rate correction.} The animal moves roughly every 3.7~s, so raw hit
+rate is uninterpretable. Against a circular-shift null (5000 permutations) the
+detector achieved precision \textbf{74.2\% against 39.3\%$\pm$5.2 expected}
+($z=+6.7$) and recall \textbf{35.3\% against 16.8\%$\pm$2.3} ($z=+8.2$), beating
+99.9\% and 100\% of permutations, with lead times $6.3\times$ more concentrated
+in the $[0,+150]$~ms window than uniform.
+
+\subsection{Cross-day transfer; what a second area contributes}
+
+Applied zero-shot to the next day the model collapsed to \textbf{AUC 0.485},
+i.e. chance, with false alarms rising to 21.8/min. After Procrustes alignment in
+the 15-D latent space it reached \textbf{AUC 0.740} against a within-day ceiling
+of 0.768. The information survives; what changes is the coordinate system in
+which electrodes report it, consistent with stable latent dynamics beneath
+unstable single-channel readouts \cite{gallego2020,degenhart2020}. Seeding
+calibration with prior-day data nearly doubled early-session recall
+(32\%$\to$56\%). Time-resolved decoding of movement against matched rest became
+reliable \textbf{140--260~ms before onset} at peak AUC 0.85, which sets the
+ceiling on any causal system's lead time.
+
+The rig already carries two probes, so the question asked of the premotor
+recording was not whether it buys lead time but whether M1 and M2 together
+\emph{distinguish self-initiated from cue-initiated movements}. On lead time it
+contributes nothing: the two population signals cross-correlate at \textbf{0~ms
+lag} ($r=0.98$--0.99, both days) with indistinguishable ramp latencies, and
+combining probes detected no earlier than M1 alone ($-120$ vs $-140$~ms), consistent with the delay-line organisation of inter-areal motor sequences
+reported in this laboratory \cite{khan_delaylines}. M2's apparently higher
+balanced accuracy (75.7\% vs 71.9\%) failed every control: it reversed for long
+cue-to-movement delays ($+2.6\to-4.0$), vanished under reward-validated labels
+(81.8 vs 81.5), and was absent for self-initiated movements ($n=447$, n.s.).
+That localises M2's extra signal to the \textbf{cue-evoked response}, which is
+the component separating cued from self-initiated trials and therefore the
+usable answer to the question posed, rather than an earlier intention signal.
+
+\section{Discussion, Conclusions, and Future Directions}
+
+The continuous attractor resolves the tension of \S1 by geometry rather than tuning, holding information along the manifold and rejecting noise across it. This connects motor preparation to a mechanism established for head-direction and
+oculomotor integration \cite{seung1996,zhang1996}.
+
+\textbf{For intervention} this is a design constraint, not a prescription. A
+single perturbation persists only if aimed within the manifold (75\% vs 8\%),
+and the behavioural axis is tilted toward it but far from contained by it, so a
+practical controller needs sustained input with a substantial off-manifold
+component. The negative LQR result is informative: the model's inferred input
+channels are too low-dimensional to steer a 128-D state, so a physical
+intervention must access the state more directly than the model's
+parameterisation suggests, motivating the nanoscale and optical interfaces
+developed in this laboratory \cite{jayant2019,gonzales2025}.
+
+\textbf{What Part~B does and does not close.} The \emph{timing} requirement is
+met, and the operative engineering constraint identified: the readout rotates
+between days, so a deployed system needs a cheap per-session realignment. It
+does \textbf{not} close the state-estimation gap. The detector is discriminative,
+answering ``is a movement imminent?'', not ``where on the manifold is the circuit
+now?'', and aiming a perturbation needs the latter.
+
+\textbf{Limitations.} Part~A state estimates are \textbf{acausal} and cannot run
+online, and the detector is discriminative rather than generative. Marginal
+subspace dimensionality is regularisation- and sampling-dependent (8--50), so the
+\emph{count} should not be over-interpreted though the \emph{existence} is
+robust. Live validation rests on one session in one animal and the cross-area
+comparison on two.
+
+\textbf{Future directions.} Causal or streaming LFADS-class inference, to obtain
+a manifold coordinate online rather than a binary trigger; optogenetic
+perturbation along versus across the manifold, which the steering result makes
+falsifiable and the validated trigger can gate; and whether manifold
+dimensionality changes over learning, testable in the existing multi-day
+recordings.
+
+\section*{Acknowledgements}
+\footnotesize
+I thank \textbf{Om Kolhe} for mentorship throughout this project and for the
+dual-probe recordings analysed here, \textbf{Hammad Khan} and \textbf{Shivam} for
+technical guidance, and \textbf{Prof.\ Krishna Jayant} for hosting this work and
+directing its scope. All recordings were performed by members of the laboratory;
+my contribution was computational. Thanks also to \textbf{Monish Lokhande}.
+Supported by the Purdue SURF program.
+
+\balance
+\begingroup\tiny
+\begin{thebibliography}{99}\itemsep0pt\parsep0pt\parskip0pt
+\bibitem{churchland2012} Churchland, M. M., et al. \emph{Nature} \textbf{487},
+51 (2012).
+\bibitem{seung1996} Seung, H. S. \emph{PNAS} \textbf{93}, 13339 (1996).
+\bibitem{zhang1996} Zhang, K. \emph{J. Neurosci.} \textbf{16}, 2112 (1996).
+\bibitem{pandarinath2018} Pandarinath, C., et al. \emph{Nat. Methods}
+\textbf{15}, 805 (2018).
+\bibitem{sussillo2013} Sussillo, D. \& Barak, O. \emph{Neural Comput.}
+\textbf{25}, 626 (2013).
+\bibitem{sedler2023} Sedler, A. R. \& Pandarinath, C. \emph{arXiv:}2309.01230
+(2023).
+\bibitem{yu2009} Yu, B. M., et al. \emph{J. Neurophysiol.} \textbf{102}, 614
+(2009).
+\bibitem{pei2021} Pei, F., et al. \emph{arXiv:}2109.04463 (2021).
+\bibitem{trautmann2019} Trautmann, E. M., et al. \emph{Neuron} \textbf{103}, 292
+(2019).
+\bibitem{gallego2020} Gallego, J. A., et al. \emph{Nat. Neurosci.} \textbf{23},
+260 (2020).
+\bibitem{degenhart2020} Degenhart, A. D., et al. \emph{Nat. Biomed. Eng.}
+\textbf{4}, 672 (2020).
+\bibitem{page1954} Page, E. S. \emph{Biometrika} \textbf{41}, 100 (1954).
+\bibitem{khan_delaylines} Khan, H. F., Kolhe, O. T., Habibi Matin, M. \&
+Jayant, K. Neural delay lines synchronize inter-areal motor sequences.
+\emph{Under review.}
+\bibitem{gonzales2025} Gonzales, D. L., et al. \emph{Sci. Adv.} \textbf{11},
+eadr4038 (2025).
+\bibitem{jayant2019} Jayant, K., et al. \emph{Cell Rep.} \textbf{26}, 266
+(2019).
+\end{thebibliography}
+\endgroup
+
+\end{document}
