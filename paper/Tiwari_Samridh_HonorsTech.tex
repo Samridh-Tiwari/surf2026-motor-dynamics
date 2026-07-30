@@ -191,16 +191,17 @@ latent space using pull-triggered averages as anchors
 
 \subsection{Sample, Code, and Data Storage}
 
-All data, analysis code, and editable figure sources will be deposited in one
-documented public repository:
-\url{https://github.com/Samridh-Tiwari/surf2026-motor-dynamics}. The deposit
-includes \textbf{pre-processed} data (raw spike archives and Intan \texttt{.rhd}
-recordings with their behavioural channels), \textbf{post-processed} data
-(rebinned model inputs, LFADS outputs, binned dual-probe arrays), and
-\textbf{editable figure sources}, each figure being produced by a committed
-script that also emits a \texttt{*\_stats.json} of the values it reports. The
-\texttt{README} lists every file and maps each figure and reported number to the
-script that generates it.
+Analysis code, trained model checkpoints, the derived numbers behind every
+reported value, and the editable source for every figure are deposited at
+\url{https://github.com/Samridh-Tiwari/surf2026-motor-dynamics}. Each figure is
+produced by a committed script that also emits a \texttt{*\_stats.json} of the
+values it reports, and the \texttt{README} maps every reported number to the
+script that generates it. The \textbf{pre-processed} data (raw Intan
+\texttt{.rhd} recordings with their behavioural channels, and the stitched spike
+archive) and the \textbf{post-processed} data (rebinned model inputs, LFADS
+per-session outputs, binned dual-probe arrays) exceed the repository size limit
+and are provided on request to the corresponding author. The committed checkpoints are sufficient to regenerate
+every Part~A result without retraining.
 
 \textbf{Labelling scheme.} Animals \texttt{61199SOM} and \texttt{61198SOM};
 sessions \texttt{Day2}--\texttt{Day7} within an animal; the stitched archive
