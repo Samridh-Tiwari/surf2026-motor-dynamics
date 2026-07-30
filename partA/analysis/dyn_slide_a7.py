@@ -8,6 +8,13 @@ C  marginal-mode count across every trained model and both mice
 
 Everything from exact autograd Jacobians of the trained generator. No cartoons.
 """
+import os as _os
+# Paths come from environment variables so the repo runs anywhere.
+# See paths.env. Defaults below are the machine this was written on.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")
 import numpy as np, h5py, glob, json, torch
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -157,10 +164,3 @@ json.dump(dict(n_marginal=float(n_marg), n_stable=float(n_stab),
                n_unstable=float(n_unst), tau_median_ms=float(np.median(tau) * 1000),
                n_fixed_points=int(len(FP)), ambient=int(cell.H)),
           open(f"{DST}/groove_stats.json", "w"), indent=2)
-import os as _os
-# Paths are read from environment variables so the repo runs anywhere.
-# Set them once (see README), or edit the defaults below.
-LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
-SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
-RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
-ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

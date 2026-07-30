@@ -9,6 +9,13 @@ the factor trajectory it produces to the one the full model inferred.
 Null: give it another trial's starting state (shuffled g0). If the rollout still
 matched, the dynamics would not be carrying trial-specific information.
 """
+import os as _os
+# Paths come from environment variables so the repo runs anywhere.
+# See paths.env. Defaults below are the machine this was written on.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")
 import numpy as np, h5py, glob, json, torch
 import torch.nn.functional as Fn
 import matplotlib; matplotlib.use("Agg")
@@ -134,10 +141,3 @@ ax2.set_title(f"B   All {n} trials\npre-cue {r2[:cue].mean():.2f}   "
 fig.tight_layout()
 fig.savefig(f"{DST}/SlideA7_rollout.png", dpi=170, bbox_inches="tight", facecolor=SURFACE)
 print("-> SlideA7_rollout.png")
-import os as _os
-# Paths are read from environment variables so the repo runs anywhere.
-# Set them once (see README), or edit the defaults below.
-LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
-SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
-RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
-ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

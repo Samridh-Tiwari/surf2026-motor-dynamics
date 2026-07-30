@@ -12,6 +12,13 @@ Outputs
   flowfield.png          static, both mice side by side
   clip_flow/f_*.png      frames: mouse 1, state moving along the flow
 """
+import os as _os
+# Paths come from environment variables so the repo runs anywhere.
+# See paths.env. Defaults below are the machine this was written on.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")
 import os, glob, json
 import numpy as np, h5py, torch
 import matplotlib; matplotlib.use("Agg")
@@ -215,10 +222,3 @@ plt.close(fig)
 json.dump({m: dict(var2=float(F[m]["var2"]), arrows=int(len(F[m]["X"])))
            for m, _ in MICE}, open(f"{DST}/flowfield_stats.json", "w"), indent=2)
 print("done")
-import os as _os
-# Paths are read from environment variables so the repo runs anywhere.
-# Set them once (see README), or edit the defaults below.
-LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
-SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
-RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
-ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

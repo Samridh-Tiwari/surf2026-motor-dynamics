@@ -12,6 +12,13 @@ bending, no per-timepoint warping, nothing fitted to make the curves agree
 beyond a rigid move. Disparity 0 = identical shape, 1 = no better than aligning
 to a time-scrambled version of the target (the null we report alongside).
 """
+import os as _os
+# Paths come from environment variables so the repo runs anywhere.
+# See paths.env. Defaults below are the machine this was written on.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")
 import numpy as np, h5py, glob, json
 from scipy.spatial import procrustes
 from matplotlib.ticker import MaxNLocator
@@ -99,10 +106,3 @@ ax.set_title("two animals, separate models", fontsize=26, weight="bold",
 fig.tight_layout()
 fig.savefig(f"{DST}/crossanimal.png", dpi=170, bbox_inches="tight", facecolor=SURFACE)
 print("-> crossanimal.png")
-import os as _os
-# Paths are read from environment variables so the repo runs anywhere.
-# Set them once (see README), or edit the defaults below.
-LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
-SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
-RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
-ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

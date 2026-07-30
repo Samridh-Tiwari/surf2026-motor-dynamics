@@ -10,6 +10,13 @@ A  exact Jacobian eigenvalues at the converged fixed points, vs the unit circle
 B  sorted |lambda| within each fixed point, mean +/- s.d.
 C  the fixed-point manifold is low-dimensional, like the data
 """
+import os as _os
+# Paths come from environment variables so the repo runs anywhere.
+# See paths.env. Defaults below are the machine this was written on.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")
 import numpy as np, h5py, glob, json, torch
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -164,10 +171,3 @@ json.dump(dict(model="cfg06", n_fixed_points=int(nfp), n_sampled=int(len(sel)),
                pr_fixed_points=float(pr_fp), pr_data=float(pr_dat)),
           open(f"{DST}/fig3_attractor_stats.json", "w"), indent=2)
 print("-> fig3_attractor_spectrum.png (cfg06)")
-import os as _os
-# Paths are read from environment variables so the repo runs anywhere.
-# Set them once (see README), or edit the defaults below.
-LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
-SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
-RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
-ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")

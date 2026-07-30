@@ -13,6 +13,13 @@ B  analytic -- sustained input needed to HOLD a unit displacement, ||(I-A)v||,
 
 A displacement along the groove is free to maintain. Off it, you pay forever.
 """
+import os as _os
+# Paths come from environment variables so the repo runs anywhere.
+# See paths.env. Defaults below are the machine this was written on.
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")
 import numpy as np, h5py, glob, json, torch
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -199,10 +206,3 @@ json.dump(dict(groove_retained=float(Kg.mean(0)[-1]), off_retained=float(Ko.mean
                n_fp=int(len(FP))),
           open(f"{DST}/steering_stats.json", "w"), indent=2)
 print("-> SlideA10_cost_of_steering.png")
-import os as _os
-# Paths are read from environment variables so the repo runs anywhere.
-# Set them once (see README), or edit the defaults below.
-LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
-SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
-RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
-ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")
