@@ -1,0 +1,107 @@
+[
+  {
+    "mouse": "61199SOM",
+    "label": "mouse 1",
+    "cfg": "cfg00",
+    "recon": 0.25779998302459717,
+    "autonomy": 0.9026345007108663
+  },
+  {
+    "mouse": "61199SOM",
+    "label": "mouse 1",
+    "cfg": "cfg01",
+    "recon": 0.252886563539505,
+    "autonomy": 0.47318710432806105
+  },
+  {
+    "mouse": "61199SOM",
+    "label": "mouse 1",
+    "cfg": "cfg03",
+    "recon": 0.2681998312473297,
+    "autonomy": 0.9854981384790448
+  },
+  {
+    "mouse": "61199SOM",
+    "label": "mouse 1",
+    "cfg": "cfg04",
+    "recon": 0.2827886939048767,
+    "autonomy": 0.9859929728160975
+  },
+  {
+    "mouse": "61199SOM",
+    "label": "mouse 1",
+    "cfg": "cfg05",
+    "recon": 0.28093135356903076,
+    "autonomy": 0.9961912018785815
+  },
+  {
+    "mouse": "61199SOM",
+    "label": "mouse 1",
+    "cfg": "cfg06",
+    "recon": 0.26024556159973145,
+    "autonomy": 0.9692043434907033
+  },
+  {
+    "mouse": "61199SOM",
+    "label": "mouse 1",
+    "cfg": "cfg08",
+    "recon": 0.2694001793861389,
+    "autonomy": 0.9151396296833987
+  },
+  {
+    "mouse": "61198SOM",
+    "label": "mouse 2",
+    "cfg": "cfg00",
+    "recon": 0.2936916947364807,
+    "autonomy": 0.7350080228015179
+  },
+  {
+    "mouse": "61198SOM",
+    "label": "mouse 2",
+    "cfg": "cfg01",
+    "recon": 0.28411754965782166,
+    "autonomy": 0.4618712877157853
+  },
+  {
+    "mouse": "61198SOM",
+    "label": "mouse 2",
+    "cfg": "cfg02",
+    "recon": 0.29680153727531433,
+    "autonomy": 0.7880489630107771
+  },
+  {
+    "mouse": "61198SOM",
+    "label": "mouse 2",
+    "cfg": "cfg03",
+    "recon": 0.3052312731742859,
+    "autonomy": 0.829651609900728
+  },
+  {
+    "mouse": "61198SOM",
+    "label": "mouse 2",
+    "cfg": "cfg04",
+    "recon": 0.3303050994873047,
+    "autonomy": 0.8373440615024164
+  },
+  {
+    "mouse": "61198SOM",
+    "label": "mouse 2",
+    "cfg": "cfg06",
+    "recon": 0.2971646785736084,
+    "autonomy": 0.8673431344556846
+  },
+  {
+    "mouse": "61198SOM",
+    "label": "mouse 2",
+    "cfg": "cfg07",
+    "recon": 0.3082672655582428,
+    "autonomy": 0.8544135863669166
+  },
+  {
+    "mouse": "61198SOM",
+    "label": "mouse 2",
+    "cfg": "cfg09",
+    "recon": 0.29732537269592285,
+    "autonomy": 0.9982184550687778
+  }
+]

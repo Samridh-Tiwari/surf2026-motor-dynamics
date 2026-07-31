@@ -52,6 +52,7 @@ inside the scripts needs editing.
 | 8/8 sessions, 0.303 vs 0.080 bits/spike, median 4.1x | `partA/analysis/dyn_recompute_cosmooth.py` | `results/cosmooth_sweep.json` |
 | Lever decode R2 0.47-0.77, baseline 0.26-0.68 | `partA/analysis/fig_lever_decode.py` | `results/lever_decode_stats.json` |
 | Lever traces figure in the paper | `partA/analysis/fig_lever_traces.py` | `figures/lever_decode_traces.png` |
+| Reconstruction and autonomy for every fitted config | `partA/analysis/fig_model_selection.py` | `results/model_selection_stats.json` |
 | Autonomous rollout 94% pre-cue, 82% post-cue | `partA/analysis/dyn_slide_a7_bridge.py` | `results/rollout_stats.json` |
 | 512 fixed points, 33 marginal, 95 stable, tau 84 ms | `partA/analysis/fig3_attractor_cfg06.py` | `results/fig3_attractor_stats.json` |
 | Marginal counts, 5 models x 2 animals | `partA/analysis/dyn_robust_61198.py` | `results/robustness*.json` |
@@ -89,8 +90,14 @@ figures/              final figures
 Animals are `61199SOM` and `61198SOM`. Sessions are `Day2` to `Day7` within an
 animal. The stitched archive indexes the same sessions as `dataset_01` to
 `dataset_08`. LFADS configurations are `cfg01` to `cfg10`; `cfg06` is the
-selected model throughout. The paper explains why the reconstruction winner was
-rejected.
+selected model throughout.
+
+`cfg06` is not the reconstruction winner, and that is deliberate. Reconstruction
+loss cannot tell dynamics apart from injected input. Run `cfg01`, the
+reconstruction winner, with all inferred input switched off and its generator
+reproduces only 47% of the trajectory in mouse 1 and 46% in mouse 2. `cfg06`
+reproduces 97% and 87%, at 2.9% and 4.6% worse reconstruction.
+`partA/analysis/fig_model_selection.py` measures both for every trained config.
 
 ## Environment
 
