@@ -1,39 +1,3 @@
-import os as _os
-# import h5py
-# import numpy as np
-# import os
-
-# INPUT_H5   = '/mnt/c/Users/tiwar133/gpfa_v0203/lfads_stitch_data.h5'
-# OUT_DIR    = '/home/tiwar133/lfads_sessions_61199SOM_20ms'
-# SESSIONS   = ['dataset_05', 'dataset_06', 'dataset_07', 'dataset_08']
-# LABELS     = ['61199SOM_Day2', '61199SOM_Day3', '61199SOM_Day4', '61199SOM_Day5']
-# REBIN      = 20
-# VAL_FRAC   = 0.2
-# os.makedirs(OUT_DIR, exist_ok=True)
-
-# with h5py.File(INPUT_H5, 'r') as fin:
-#     for ds_name, label in zip(SESSIONS, LABELS):
-#         spikes = fin[ds_name]['spikes'][:]
-#         spikes = np.transpose(spikes, (2, 1, 0))  # [nTrials, 3000, nNeurons]
-#         # Rebin to 20ms
-#         nTrials, nTime, nNeurons = spikes.shape
-#         nBins = nTime // REBIN
-#         spikes = spikes[:, :nBins*REBIN, :]
-#         spikes = spikes.reshape(nTrials, nBins, REBIN, nNeurons).sum(axis=2)
-#         # Train/val split
-#         n_val   = max(1, int(nTrials * VAL_FRAC))
-#         n_train = nTrials - n_val
-#         train_data = spikes[:n_train]
-#         valid_data = spikes[n_train:]
-#         out_path = f"{OUT_DIR}/lfads_{label}.h5"
-#         with h5py.File(out_path, 'w') as fout:
-#             fout.create_dataset('train_encod_data', data=train_data)
-#             fout.create_dataset('train_recon_data',  data=train_data)
-#             fout.create_dataset('valid_encod_data', data=valid_data)
-#             fout.create_dataset('valid_recon_data',  data=valid_data)
-#         print(f"{label}: train={train_data.shape}, valid={valid_data.shape}")
-
-# print("\nDone!")
 #!/usr/bin/env python3
 """
 rebin_lfads_61199_FIXED.py
@@ -57,12 +21,13 @@ THE FIX:
   Remove the transpose entirely. Just rebin and split.
 """
 
+import os as _os
 import h5py
 import numpy as np
 import os
 
-INPUT_H5 = _os.environ.get('STITCH_H5', '/mnt/c/Users/tiwar133/gpfa_v0203/lfads_stitch_data.h5')
-OUT_DIR  = _os.environ.get('BINNED_DIR', '/home/tiwar133/lfads_sessions_61199SOM_20ms_FIXED')
+INPUT_H5 = _os.environ.get('STITCH_H5', '/path/to/lfads_stitch_data.h5')
+OUT_DIR  = _os.environ.get('BINNED_DIR', '/path/to/lfads_sessions_61199SOM_20ms_FIXED')
 SESSIONS = ['dataset_05', 'dataset_06', 'dataset_07', 'dataset_08']
 LABELS   = ['61199SOM_Day2', '61199SOM_Day3', '61199SOM_Day4', '61199SOM_Day5']
 REBIN    = 20       # 1ms -> 20ms bins
