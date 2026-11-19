@@ -12,11 +12,11 @@ function verify_m1m2(day)
 %         response; if M2's edge lives only there it is sensory, not "intention".
 %   Everything reported as BALANCED accuracy with a label-shuffle null.
     if nargin<1, day=2; end
-    root='C:\Users\tiwar133\gpfa_v0203\Data_Realtime';
+    root=dataRoot();
     if day==2
-        f=fullfile(root,'MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423\quick_M1_vs_M1M2_results.mat');
+        f=fullfile(root,'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423', 'quick_M1_vs_M1M2_results.mat');
     else
-        f=fullfile(root,'MouseM1\Day1\eOPN_M1_DualShank_Day1_260721_195215\quick_M1_vs_M1M2_results.mat');
+        f=fullfile(root,'MouseM1', 'Day1', 'eOPN_M1_DualShank_Day1_260721_195215', 'quick_M1_vs_M1M2_results.mat');
     end
     S=load(f); rng(7);
     TMI=S.pcaM1M2.trialsMI; TFA=S.pcaM1M2.trialsMIFA;

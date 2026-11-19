@@ -4,9 +4,9 @@ function bin_both_ports(sessionDir, nChanPort)
 %   -> 20 ms bins), carrying filter/baseline state across file boundaries.
 %   Port B = M1 (single shank), Port A = M2 (dual shank).
 %   Saves <sessionDir>/binned_M1_M2.mat so later analyses never re-read raw data.
-    if nargin<1, sessionDir='C:\Users\tiwar133\gpfa_v0203\Data_Realtime\MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423'; end
+    if nargin<1, sessionDir=fullfile(dataRoot(), 'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423'); end
     if nargin<2, nChanPort=64; end
-    root='C:\Users\tiwar133\gpfa_v0203\Data_Realtime'; addpath(root);
+    root=dataRoot(); addpath(root);
     d=dir(fullfile(sessionDir,'*.rhd')); [~,ix]=sort({d.name}); d=d(ix);
     assert(~isempty(d),'no .rhd in %s',sessionDir);
     fprintf('BIN BOTH PORTS: %d files from %s\n',numel(d),sessionDir);

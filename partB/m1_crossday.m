@@ -2,9 +2,9 @@ function m1_crossday
 %M1_CROSSDAY  Honest cross-day test: train Fisher-LDA on Day1, predict Day2.
 %   Uses 64 channels on both (Port B, B-000..B-063), cue-aware rest labels,
 %   Day1-frozen normalization applied to Day2 (exactly how the GUI deploys it).
-    root='C:\Users\tiwar133\gpfa_v0203\Data_Realtime'; rng(7); nLag=12; nCh=64;
-    d1=fullfile(root,'MouseM1\Day1\eOPN_M1_DualShank_Day1_260721_195215');
-    d2=fullfile(root,'MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423');
+    root=dataRoot(); rng(7); nLag=12; nCh=64;
+    d1=fullfile(root,'MouseM1', 'Day1', 'eOPN_M1_DualShank_Day1_260721_195215');
+    d2=fullfile(root,'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423');
     [X1,bT1,dt,on1,cue1,lv1]=ld(d1,nCh);
     [X2,bT2,~ ,on2,cue2,lv2]=ld(d2,nCh); %#ok<ASGLU>
     [p1,r1]=lab(bT1,on1,cue1); [p2,r2]=lab(bT2,on2,cue2);

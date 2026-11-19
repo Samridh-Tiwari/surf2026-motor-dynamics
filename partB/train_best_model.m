@@ -6,7 +6,7 @@
 % scores, and saves them so the trial clips can be re-rendered with the
 % learned detector for a side-by-side vs CUSUM.
 clear; clc; close all;
-root='C:\Users\tiwar133\gpfa_v0203\Data_Realtime';
+root=dataRoot();
 data=fullfile(root,'61199SomDay4Recording1_241213_181033');
 
 S =load(fullfile(data,'online_binned_data.mat'),'online_binned','binCenterTimes','binSizeSec','calibCutoffTime');

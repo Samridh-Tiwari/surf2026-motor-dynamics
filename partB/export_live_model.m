@@ -16,7 +16,7 @@ function export_live_model(trainSession, faTarget)
 %       score= w' * feat + b
 %       alarm when score > theta for `dwell` bins, then `refractorySec` lockout
 
-    root='C:\Users\tiwar133\gpfa_v0203\Data_Realtime';
+    root=dataRoot();
     if nargin<1 || isempty(trainSession), trainSession='61198SOMDay2Recording1_241214_121351'; end
     if nargin<2, faTarget=5.0; end
     nLag=12; dwell=2; refractorySec=2.0; posPreSec=0.18;

@@ -13,7 +13,7 @@
 clear; clc;
 
 %% ---- Config ----
-data_folder       = 'C:\Users\tiwar133\gpfa_v0203\Data_Realtime\MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423';
+data_folder       = fullfile(dataRoot(), 'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423');
 analog_in_num     = 2;   % ANALOG-IN-2   = lever trace
 cue_dig_in_num    = 4;   % DIGITAL-IN-04 = cue
 reward_dig_in_num = 3;   % DIGITAL-IN-03 = reward

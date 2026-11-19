@@ -5,9 +5,9 @@ function m1m2_cuefree_test
 %   when we use ONLY pulls with no cue in the preceding 3 s?
 %   If it vanishes -> the advantage is cue-evoked, and the days actually agree.
 %   If it holds  -> M2 genuinely carries more movement-preparation signal.
-    root='C:\Users\tiwar133\gpfa_v0203\Data_Realtime'; rng(7);
-    S={'Day1',fullfile(root,'MouseM1\Day1\eOPN_M1_DualShank_Day1_260721_195215');
-       'Day2',fullfile(root,'MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423')};
+    root=dataRoot(); rng(7);
+    S={'Day1',fullfile(root,'MouseM1', 'Day1', 'eOPN_M1_DualShank_Day1_260721_195215');
+       'Day2',fullfile(root,'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423')};
     for s=1:2
         d=S{s,2};
         B=load(fullfile(d,'binned_M1_M2.mat'),'binM1','binM2','binT','binSec');

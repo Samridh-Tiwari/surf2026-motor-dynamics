@@ -5,7 +5,7 @@ function shuffle_control(runmat)
 %   If the model fires randomly/periodically, shifted trains score the same ->
 %   z~0. If it truly aligns to movement, shifts break it -> large positive z.
     if nargin<1
-        runmat='C:\Users\tiwar133\gpfa_v0203\Data_Realtime\ClosedLoopGUI_standalone\runs\run_20260724_160137\run_stats.mat';
+        runmat=fullfile(dataRoot(), 'ClosedLoopGUI_standalone', 'runs', 'run_20260724_160137', 'run_stats.mat');
     end
     S=load(runmat); al=S.alarms(:); pl=S.pulls(:); T=S.elapsed; W=1.5;   % "pull follows within W s"
     if numel(al)<5 || numel(pl)<5, fprintf('too few events\n'); return; end

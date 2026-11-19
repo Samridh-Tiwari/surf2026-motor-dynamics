@@ -4,9 +4,9 @@ function find_reward_threshold
 %   Recover it empirically: look at the lever trace right before each reward.
 %   The lower edge of that distribution IS the hardware threshold.
 %   Then check whether one common absolute threshold works for both sessions.
-    root='C:\Users\tiwar133\gpfa_v0203\Data_Realtime';
-    S={'Day1',fullfile(root,'MouseM1\Day1\eOPN_M1_DualShank_Day1_260721_195215');
-       'Day2',fullfile(root,'MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423')};
+    root=dataRoot();
+    S={'Day1',fullfile(root,'MouseM1', 'Day1', 'eOPN_M1_DualShank_Day1_260721_195215');
+       'Day2',fullfile(root,'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423')};
     pk=cell(1,2);
     for s=1:2
         ev=load(fullfile(S{s,2},'behavioral_events.mat'));

@@ -5,9 +5,9 @@ function m1_realtime_test
 %      "calibrate at session start, then run live on new data" scenario.
 %  (2) CROSS-DAY: Day1 model on Day2, un-aligned vs Procrustes-aligned, to show
 %      the manifold is preserved (coordinates just rotate).
-    root='C:\Users\tiwar133\gpfa_v0203\Data_Realtime'; rng(7); nLag=12; nCh=64; refrS=2; dwell=2;
-    d1=fullfile(root,'MouseM1\Day1\eOPN_M1_DualShank_Day1_260721_195215');
-    d2=fullfile(root,'MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423');
+    root=dataRoot(); rng(7); nLag=12; nCh=64; refrS=2; dwell=2;
+    d1=fullfile(root,'MouseM1', 'Day1', 'eOPN_M1_DualShank_Day1_260721_195215');
+    d2=fullfile(root,'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423');
 
     % =============== (1) within-session held-out on Day2 ===============
     [X,bT,dt,on,cue]=ld(d2,nCh); [pos,rest]=lab(bT,on,cue); refr=round(refrS/dt);

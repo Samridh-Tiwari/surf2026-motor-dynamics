@@ -6,7 +6,7 @@ function m1_fisher_lda(session)
 %     m1_lda_separation.png    - score distributions + ROC (AUC)
 %     m1_alarm_before_move.png - lead-time histogram (alarm vs pull onset)
 %     m1_operating.png         - recall vs false-alarms/min operating curve
-    if nargin<1, session='C:\Users\tiwar133\gpfa_v0203\Data_Realtime\MouseM1\Day1\eOPN_M1_DualShank_Day1_260721_195215'; end
+    if nargin<1, session=fullfile(dataRoot(), 'MouseM1', 'Day1', 'eOPN_M1_DualShank_Day1_260721_195215'); end
     rng(7); nLag=12;
     S =load(fullfile(session,'online_binned_data.mat'),'online_binned','binCenterTimes','binSizeSec','calibCutoffTime');
     ev=load(fullfile(session,'behavioral_events.mat'),'leverTrace','leverTimeVec','fs','cueTimes');

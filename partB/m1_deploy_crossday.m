@@ -5,9 +5,9 @@ function m1_deploy_crossday
 %   COLLAPSES the (PCA -> rotate -> LDA) chain into one 64ch x 12lag weight
 %   vector -> saves ClosedLoopGUI_standalone/live_model.mat. Held-out Day2 (last
 %   60%) is used only to verify, never for building.
-    root='C:\Users\tiwar133\gpfa_v0203\Data_Realtime'; rng(7); nLag=12; nCh=64; K=15; calFrac=0.40;
-    d1=fullfile(root,'MouseM1\Day1\eOPN_M1_DualShank_Day1_260721_195215');
-    d2=fullfile(root,'MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423');
+    root=dataRoot(); rng(7); nLag=12; nCh=64; K=15; calFrac=0.40;
+    d1=fullfile(root,'MouseM1', 'Day1', 'eOPN_M1_DualShank_Day1_260721_195215');
+    d2=fullfile(root,'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423');
     outPath=fullfile(root,'ClosedLoopGUI_standalone','live_model.mat');
 
     % ---- Day1 reference: latent LDA + pull-anchor ----

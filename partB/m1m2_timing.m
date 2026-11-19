@@ -15,7 +15,7 @@ function m1m2_timing(sessionDir, tag)
 %
 %   Also reports M1+M2 combined: if it detects earlier than M1 alone, adding the
 %   second probe would buy real lead time in the closed-loop rig.
-    if nargin<1, sessionDir='C:\Users\tiwar133\gpfa_v0203\Data_Realtime\MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423'; end
+    if nargin<1, sessionDir=fullfile(dataRoot(), 'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423'); end
     if nargin<2, tag='Day2'; end
     rng(7);
     B=load(fullfile(sessionDir,'binned_M1_M2.mat'),'binM1','binM2','binT','binSec');
@@ -137,7 +137,7 @@ function m1m2_timing(sessionDir, tag)
     xline(ax,1000*lagS,'-','Color',[.75 .2 .17],'LineWidth',2,'Label',sprintf('%+.0f ms',1000*lagS));
     xline(ax,0,'k:'); xlabel(ax,'lag (ms)   [+ = M2 leads M1]'); ylabel(ax,'correlation'); grid(ax,'on');
     title(ax,'(C) M1-M2 cross-correlation','FontWeight','bold');
-    outDir=fullfile('C:\Users\tiwar133\gpfa_v0203\Data_Realtime','m1m2_audit');
+    outDir=fullfile(dataRoot(),'m1m2_audit');
     if ~exist(outDir,'dir'), mkdir(outDir); end
     exportgraphics(f,fullfile(outDir,sprintf('m1m2_timing_%s.png',tag)),'Resolution',200); close(f);
     fprintf('\nSAVED %s\n',fullfile(outDir,sprintf('m1m2_timing_%s.png',tag)));

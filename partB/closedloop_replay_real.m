@@ -16,7 +16,7 @@
 clear; clc; close all;
 
 %% ---- Config (mirrors closedloop_demo.m) ----
-data_folder    = 'C:\Users\tiwar133\gpfa_v0203\Data_Realtime\MouseM1\Day2\eOPN_M1_DualShank_Day2_260722_163423';
+data_folder    = fullfile(dataRoot(), 'MouseM1', 'Day2', 'eOPN_M1_DualShank_Day2_260722_163423');
 electrode_port = 'Port B';                 % M1 single shank (MouseM1 Day2)
 n_channels_expected     = 64;              % Port B: B-000..B-063
 raw_n_channels_expected = 160;             % Port A (64) + Port B (64) + Port C grid (32)
