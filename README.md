@@ -2,17 +2,46 @@
 
 Code, trained models and derived results for the SURF 2026 technical report
 *A Continuous Attractor in Mouse Motor Cortex, and a Causal Readout for
-Closed-Loop Intervention* (Tiwari, Kolhe, Jayant).
+Closed-Loop Intervention* (Samridh Tiwari, Om Kolhe, Krishna Jayant), Nano
+Neurotechnology Laboratory, Purdue University, June to August 2026.
 
 Two mice, 9 recording sessions, 39 to 118 simultaneously recorded neurons in
-forelimb motor cortex during a cued lever-pull task.
+forelimb motor cortex during a cued lever-pull task. The recordings were made
+by members of the laboratory; my contribution was computational: the analysis
+and the detector.
 
 Part A fits LFADS to the spiking and analyses the learned dynamics.
 Part B builds a causal, real-time detector of impending movement.
 
+## Reports
+
+- [`paper/Tiwari_Samridh_FinalReport.pdf`](paper/Tiwari_Samridh_FinalReport.pdf):
+  the full final report (23 pages).
+- [`paper/Tiwari_Samridh_HonorsTech.pdf`](paper/Tiwari_Samridh_HonorsTech.pdf):
+  a 6-page short version of the same work.
+
+Both are unpublished and have not been peer reviewed. The LaTeX sources are in
+`paper/`.
+
+## Main results
+
+- LFADS predicts held-out neurons better than GPFA in 8 of 8 sessions (median
+  4.1x), and a linear readout of its state recovers lever movement on held-out
+  trials (R² 0.47 to 0.77), although the model never saw the lever.
+- With external input switched off, the fitted dynamics have a continuous
+  attractor: at 512 fixed points, about 33 directions are marginally stable and
+  about 95 decay within 84 ms. The same structure appears in five separately
+  trained models per animal and in both animals.
+- A causal detector running on the live amplifier stream flagged movement a
+  median of 80 ms before the lever moved, with precision 6.7 standard deviations
+  above a null that keeps the alarm rate fixed.
+- Choosing a model by reconstruction error picks models that explain the data
+  with injected input rather than with their own dynamics (see Labelling below).
+
 ## Data
 
-Data is provided on request. Contact `samridhtiwari3005@gmail.com`.
+The recordings belong to the Nano Neurotechnology Laboratory. They are available
+on request; contact `samridhtiwari3005@gmail.com`.
 
 The recordings are too large for GitHub. The stitched spike archive is 1.7 GB,
 the per-session behavioural files total 33 GB, and the LFADS per-session outputs
@@ -42,8 +71,10 @@ To regenerate a figure, set `LFADS_RUNS` and run the script, for example:
 python partA/analysis/fig_crossanimal.py
 ```
 
-All paths are read from environment variables, listed in `paths.env`. Nothing
-inside the scripts needs editing.
+All paths are read from environment variables, listed in `paths.env`. Part A
+uses `LFADS_RUNS`, `RESULTS_DIR` and the others; Part B uses
+`SURF_DATA_REALTIME`, read by `partB/dataRoot.m`. Nothing inside the scripts
+needs editing.
 
 ## Where each number comes from
 
@@ -72,7 +103,7 @@ inside the scripts needs editing.
 ## Layout
 
 ```
-paper/                the technical report (LaTeX) and its figures
+paper/                the two reports (PDF and LaTeX) and their figures
 partA/
   sweep_dyn.py        LFADS training and hyperparameter sweep
   preprocessing/      1 ms spikes to 20 ms bins, per animal
@@ -80,6 +111,7 @@ partA/
   models/             trained cfg06 checkpoint and hparams, per animal
   results/            JSON written by each script
 partB/
+  dataRoot.m          reads SURF_DATA_REALTIME, the Part B data folder
   pipeline/           causal front end: CMR, filter, threshold, PCA, CUSUM
   *.m                 detection, validation, cross-day, cross-area
 figures/              final figures
@@ -102,7 +134,8 @@ reproduces 97% and 87%, at 2.9% and 4.6% worse reconstruction.
 ## Environment
 
 Part A needs Python with `numpy`, `scipy`, `h5py`, `scikit-learn`, `matplotlib`,
-`pandas`, and `lfads-torch` with PyTorch. See `requirements.txt`.
+`pandas`, and [lfads-torch](https://github.com/arsedler9/lfads-torch) with
+PyTorch, which is installed separately. See `requirements.txt`.
 Part B needs MATLAB R2026a.
 
 All stochastic procedures are seeded, so the reported numbers reproduce exactly.
@@ -111,7 +144,7 @@ All stochastic procedures are seeded, so the reported numbers reproduce exactly.
 
 ```
 lfads_stitch_data.h5                    raw spike counts, 1 ms
-   |  partA/preprocessing/rebin_lfads_<animal>_FIXED.py
+   |  partA/preprocessing/rebin_lfads_<61199|61198>_FIXED.py
    v
 20 ms binned sessions                   150 bins per trial, 80/20 split
    |  partA/sweep_dyn.py <animal>
@@ -125,7 +158,7 @@ figures/ and partA/results/*.json
 Rebin:
 
 ```bash
-python partA/preprocessing/rebin_lfads_61199SOM_FIXED.py
+python partA/preprocessing/rebin_lfads_61199_FIXED.py   # or rebin_lfads_61198_FIXED.py
 ```
 
 Train. `SMOKE=1` runs one config for three epochs as a pipeline check.
@@ -182,6 +215,7 @@ run_stats.mat and reported numbers
 From MATLAB, with `partB/` and `partB/pipeline/` on the path:
 
 ```matlab
+setenv('SURF_DATA_REALTIME', '/path/to/Data_Realtime')
 extractBehavioralEvents
 find_reward_threshold
 [onset, thrV, amp] = genuine_pulls(sessionDir, 1.0);

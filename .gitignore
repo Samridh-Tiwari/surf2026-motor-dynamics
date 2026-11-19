@@ -1,4 +1,4 @@
-# data lives on Box, never commit it here
+# raw data are never committed here
 *.h5
 *.rhd
 *.mat
@@ -14,5 +14,9 @@ __pycache__/
 *.fdb_latexmk
 *.fls
 *.pdf
+!paper/*.pdf
 .DS_Store
 Thumbs.db
+
+# local path settings
+paths.local.env

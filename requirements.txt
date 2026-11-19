@@ -1,4 +1,4 @@
-# Part A. Install lfads-torch separately (see README), it pulls in torch.
+# Part A. Install lfads-torch separately (see README); it pulls in torch.
 numpy>=1.21
 scipy>=1.7
 h5py>=3.0
