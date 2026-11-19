@@ -18,8 +18,8 @@ input fits the spikes just as well as one explained by the learned rule. Only
 models with high autonomy are usable for a claim about intrinsic dynamics.
 """
 import os as _os
-LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
-RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/path/to/lfads_runs/sweep_dyn")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "./figures")
 
 import numpy as np, h5py, glob, json, torch
 import matplotlib; matplotlib.use("Agg")

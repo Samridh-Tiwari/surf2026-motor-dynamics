@@ -16,10 +16,10 @@ A displacement along the groove is free to maintain. Off it, you pay forever.
 import os as _os
 # Paths come from environment variables so the repo runs anywhere.
 # See paths.env. Defaults below are the machine this was written on.
-LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/home/tiwar133/lfads_runs/sweep_dyn")
-SESSION_DATA = _os.environ.get("SESSION_DATA", "/mnt/c/Users/tiwar133/gpfa_v0203/MultiSessionData")
-RESULTS_DIR = _os.environ.get("RESULTS_DIR", "/home/tiwar133/SURF_talk_figures")
-ROBUST_DIR = _os.environ.get("ROBUST_DIR", "/home/tiwar133/dynamics_final")
+LFADS_RUNS = _os.environ.get("LFADS_RUNS", "/path/to/lfads_runs/sweep_dyn")
+SESSION_DATA = _os.environ.get("SESSION_DATA", "/path/to/MultiSessionData")
+RESULTS_DIR = _os.environ.get("RESULTS_DIR", "./figures")
+ROBUST_DIR = _os.environ.get("ROBUST_DIR", "./partA/results")
 import numpy as np, h5py, glob, json, torch
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
