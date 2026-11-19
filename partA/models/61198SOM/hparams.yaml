@@ -6,7 +6,7 @@ ci_enc_dim: 64
 ci_lag: 1
 co_dim: 4
 con_dim: 64
-datafile_pattern: /home/tiwar133/lfads_sessions_61198SOM_20ms_FIXED/lfads_*.h5
+datafile_pattern: /path/to/lfads_sessions_61198SOM_20ms_FIXED/lfads_*.h5
 dm_ic_enc_seq_len: 0
 dropout_rate: 0.1
 encod_data_dim: 15
